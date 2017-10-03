@@ -1,3 +1,4 @@
+%pyspark
 from pyspark import SparkConf,SparkContext
 import time
 import sys
@@ -14,10 +15,16 @@ from pytz import timezone
 import pytz
 from datetime import datetime
 
+
+'''
+
 ### creating spark context
 conf = SparkConf()
 conf.setAppName('alpha-code')
 sc = SparkContext(conf=conf)
+
+'''
+
 
 
 from pyspark.sql import SQLContext
@@ -76,31 +83,31 @@ StartDate = get_pst_date()
 try :
 	
 	
-	parser = argparse.ArgumentParser()
-	parser.add_argument("--launch_date", help="Write launch_date like Y-M-D")
-	parser.add_argument("--locale_name", help="Write locale_name like en_nz")
-	parser.add_argument("--sqlTraveler", help="Write True or False")
-	parser.add_argument("--data_environ", help="Write dev or prod or test")
-	parser.add_argument("--file_name_s3", help="Write file_name_se like s3://")
+#	parser = argparse.ArgumentParser()
+#	parser.add_argument("--launch_date", help="Write launch_date like Y-M-D")
+#	parser.add_argument("--locale_name", help="Write locale_name like en_nz")
+#	parser.add_argument("--sqlTraveler", help="Write True or False")
+#	parser.add_argument("--data_environ", help="Write dev or prod or test")
+#	parser.add_argument("--file_name_s3", help="Write file_name_se like s3://")
 
-	args = parser.parse_args()
-	LaunchDate = args.launch_date
-	locale_name = args.locale_name
-	sqlTraveler = args.sqlTraveler
-	data_environ = args.data_environ
-	file_name_s3 = args.file_name_s3
-	pos = locale_name.split('_')[1].upper()
-	current_date =  time.strftime("%Y/%m/%d")
+#	args = parser.parse_args()
+#	LaunchDate = args.launch_date
+#	locale_name = args.locale_name
+#	sqlTraveler = args.sqlTraveler
+#	data_environ = args.data_environ
+#	file_name_s3 = args.file_name_s3
+#	pos = locale_name.split('_')[1].upper()
+#	current_date =  time.strftime("%Y/%m/%d")
 	
 	
 	
-	#LaunchDate = '2017-09-17'
-	#locale_name = 'en_nz'
-	#sqlTraveler = 'False'
-	#data_environ = 'prod'
+	LaunchDate = '2017-10-08'
+	locale_name = 'en_au'
+	sqlTraveler = 'False'
+	data_environ = 'prod'
 	#file_name_s3 = 'en_US_testing_20170829'
-	#pos = locale_name.split('_')[1].upper()
-	#current_date =  '2017/09/14'
+	pos = locale_name.split('_')[1].upper()
+	current_date =  '2017/09/14'
 	
 	status_table = (sqlContext.read.format("jdbc").option("url", "jdbc:sqlserver://10.23.18.135").option("driver","com.microsoft.sqlserver.jdbc.SQLServerDriver").option("dbtable", "Orchestration.dbo.AlphaConfig").option("user", "occuser").option("password", "Exp3dia22").load())
 	pos1 = locale_name.split('_')[1].upper() #Converting the country to uppercase
@@ -116,12 +123,12 @@ try :
 	process_name_log = sc.broadcast(process_name)
 	
 	
-	log_df_update(sqlContext,1,'parameters are correct',get_pst_date(),' ','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,1,'parameters are correct',get_pst_date(),' ','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
 	
 except:
-	log_df_update(sqlContext,0,'failed',get_pst_date(),'parameters are improper','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
+#	log_df_update(sqlContext,0,'failed',get_pst_date(),'parameters are improper','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
 	raise Exception("parameters not present!!!")
 
 print("LaunchDate = " + str(LaunchDate))
@@ -149,12 +156,12 @@ try :
 		data_framename = 'df'+(''.join([i.title() for i in name.split('.')[0].split('_')]))
 		globals()[data_framename] = (importFiles("{}_{}".format(name,data_environ))).drop("id") 
 
-	log_df_update(sqlContext,1,'config files are imported',get_pst_date(),' ','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,1,'config files are imported',get_pst_date(),' ','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
 	
 except:
-	log_df_update(sqlContext,0,'failed',get_pst_date(),'config files not present','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')  
+#	log_df_update(sqlContext,0,'failed',get_pst_date(),'config files not present','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')  
 	raise Exception("campaign meta data not present!!!")
 
 
@@ -162,18 +169,7 @@ except:
 ### import traveler profile data
 StartDate = get_pst_date()
 
-'''
-try :
-	dfTraveler = (sqlContext.read.parquet("s3n://big-data-analytics-scratch-prod/project_traveler_profile/affine/email_campaign/merged_shop_phase_date_format/{}/{}/{}".format(pos,locale_name,current_date)).filter("mer_status = 1") .cache())
-	log_df_update(1,'traveler data imported',get_pst_date(),'No Error',str(dfTraveler.count()),StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	
-except:
-	log_df_update(0,'failed',get_pst_date(),'current traveler data was not present','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	raise Exception("traveler data not present!!!")
-'''
 
-	#reading the tables
-	
 	
 #gives information about the completion status, launch and end dates
 central_log_table = (sqlContext.read.format("jdbc")
@@ -200,7 +196,6 @@ traveler_source_lookup_row = etl_config_table.filter(filter_condition_etl_config
 print(traveler_source_lookup_row)
 central_log_status_id = traveler_source_lookup_row[0]["ID"]
 clt1 = central_log_table.filter(central_log_table.SourceID == central_log_status_id).filter(central_log_table.IsComplete == 1).filter(central_log_table.SourceName == "ETL").orderBy(desc('StartDate'))
-#  clt1.show(2,False)
 detailed_log_list = clt1.collect()[0] 
 print (detailed_log_list)
 log_id = detailed_log_list['LogID']
@@ -238,12 +233,12 @@ dfModuleVariableDefinition = (df3.drop("var_source")
 
 
 if (dfModuleVariableDefinition.count()) <= 0 :
-	log_df_update(sqlContext,0,'populating var source in module var definition',get_pst_date(),'check filters data is not present','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')  
+#	log_df_update(sqlContext,0,'populating var source in module var definition',get_pst_date(),'check filters data is not present','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')  
 	raise Exception("check filters data is not present in module variable definition!!!")
-else :
-	log_df_update(sqlContext,1,'Populated var source in module var definition',get_pst_date()," ",str(dfModuleVariableDefinition.count()),StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#else :
+#	log_df_update(sqlContext,1,'Populated var source in module var definition',get_pst_date()," ",str(dfModuleVariableDefinition.count()),StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
 
 
 StartDate = get_pst_date()
@@ -255,30 +250,175 @@ dfMetaCampaignData1 = (dfCampaignDefinition
 dfMetaCampaignData2 = (dfMetaCampaignData1.join(dfTemplateDefinition.filter("template_deleted_flag = 0"),'template_id','inner')
 																		 .join(dfSegmentModule.filter("seg_mod_deleted_flag = 0"),'segment_module_map_id','inner')
 																		 .join(dfModuleDefinition,['locale','module_type_id','tpid','eapid','placement_type','channel'],'inner')                                     
-																		 .join(dfSegmentDefinition.filter("segment_deleted_flag = 0"),["tpid","eapid","segment_type_id"],'inner')
-																		 .filter("status = 'active published'"))
+																		 .join(dfSegmentDefinition.filter("segment_deleted_flag = 0"),["tpid","eapid","segment_type_id"],'inner'))
 
 #contains all the data that is required for meta campaign which will be joined with travelers later on
 dfMetaCampaignData_31 = (dfMetaCampaignData2.select([c for c in dfMetaCampaignData2.columns if c not in 
 																			 {"campaign_type_id","dayofweek","program_type",
-																			"derived_module_id","context","language","lob_intent","status"}])
+																			"derived_module_id","context","language","lob_intent"}])
 										.withColumn("locale",lower_locale_udf("locale"))
 										.filter(pos_filter_cond))
 
 
 if (dfMetaCampaignData_31.count()) <= 0 :
 	condition_str = 'check campaign is present for locale {} and launch date {}'.format(locale_name,LaunchDate)
-	log_df_update(sqlContext,0,'creating meta campaign data',get_pst_date(),condition_str,'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
-	raise Exception(condition_str)
-else :
-	log_df_update(sqlContext,1,'meta campaign data creation',get_pst_date()," ",'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'creating meta campaign data',get_pst_date(),condition_str,'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
+#	raise Exception(condition_str)
+#else :
+#	log_df_update(sqlContext,1,'meta campaign data creation',get_pst_date()," ",'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
 
 
 print("------------created Meta_campaign_31")
 
 
+
+#Test Look Up Changes Start here
+
+try:
+    historical_test_data = spark.read.option("header", "true").csv("s3://big-data-analytics-scratch-prod/project_traveler_profile/affine/email_campaign/test_control/historical_test_table_testing_temp.csv")
+except:
+    print("Error getting historical test table")
+
+historical_test_data.show(100,False)
+historical_test_data = historical_test_data.distinct()
+
+
+#Reading the historical table and filtering for the corresponding locale. Here, we collect the sampled data for all tests pertaining to the given campaign launch and locale
+
+filter_locale = "locale = '" + str(locale_name) + "'"
+sampled_data_paths = historical_test_data.filter("test_id != '999'").filter(filter_locale).select("path").distinct().rdd.flatMap(lambda x:x).collect()
+print(sampled_data_paths)
+
+file_counter = 0
+
+
+#final_df is the dataframe that has the sampling information
+
+
+for sample_data_path in sampled_data_paths:
+    if(file_counter == 0):
+        try:
+            final_df = spark.read.parquet(sample_data_path)
+        except:
+            print("not found " + sample_data_path)
+            file_counter = 0
+            continue
+        file_counter = 1
+    else:
+        temp_df = spark.read.parquet(sample_data_path)
+        final_df = final_df.union(temp_df)
+		
+
+if(len(sampled_data_paths) == 0):
+    final_df = spark.read.parquet("s3://occ-decisionengine/config_file_test_set_up/test_builder_output_09202017_final").filter("test_id = 908977") # To preserve schema
+
+
+
+#Algo to find the mapping between test id and corresponding campaign type
+
+#Step 1: Filter meta_campaign_31 to obtain the list of test published modules
+#Step 2: Join this with the sampled output
+#Step 3: Convert that to pandas and obtain a mapping of test id to campaign id
+
+
+
+
+
+test_module_table = dfMetaCampaignData_31.filter("status = 'test published'")
+test_module_table_filtered = test_module_table.select(col("campaign_id").alias("campaign_look_up_id"),"module_id","placement_type","slot_position").distinct()
+final_df_updated = final_df.join(test_module_table_filtered,["module_id"],"left")
+new_columns = (final_df.columns) + ["placement_type","campaign_look_up_id","slot_position"]
+final_df_updated = final_df_updated.select(new_columns)
+
+
+tests_on_current_campaign = final_df_updated.filter("campaign_look_up_id is not null ").select("test_id").distinct().rdd.flatMap(lambda x:x).collect()
+print("Tests on current Campaign are: ")
+print(tests_on_current_campaign)
+
+
+
+
+#Filtering a set of active tests on the current campaign
+
+final_df_updated = final_df_updated.where(final_df.test_id.isin(tests_on_current_campaign))
+
+final_df = final_df_updated
+
+
+
+if(len(tests_on_current_campaign) == 0):
+    module_version_test_flag = False
+else:
+    module_version_test_flag = True
+
+
+
+#Step 1: Filter the table only for treatment groups
+#Step 2: Obtain the information about campaign id
+#Step 3: Create an identifier for each row. Test candidates will be uniquely identified by test_keys, segment_type_id and campaign_id.
+#Step 4: lookup_dict is a dictionary that is used to identify the rows that belong to treamtment for aa given campaign run.
+#Step 5: lookup_dict_control is a dictionary that helps us replace the module version by using the test look up. 
+
+#ASSUMPTION: Suppose there are multiple tests (of the same type. Module version in this case), they must be on a different segment for a given campaign_id. If a test already exists for the same segment, then it must be for different campaign-id. 
+
+
+
+
+
+
+
+final_df.cache()
+
+
+final_df = final_df.withColumn("module_id", final_df["module_id"].cast(StringType()))
+
+lookup_df = final_df.filter("T_C_flag != 'control'").withColumn("Replacement_Identifier",concat(col("test_keys"),lit("#"),col("segment_type_id"),lit("#"),col("campaign_look_up_id") )).select("Replacement_Identifier","module_id").toPandas()
+
+#Creating a dictionary for control look up
+lookup_df.index = lookup_df.Replacement_Identifier
+lookup_dict = lookup_df.to_dict()['module_id']
+print(lookup_dict)
+
+
+#creating a dictionary for module type  look up
+lookup_df_control = final_df.filter("T_C_flag != 'control'").withColumn("Replacement_Identifier_Type",concat(col("test_keys"),lit("#"),col("segment_type_id"),lit("#"),col("campaign_look_up_id"),lit("#"),col("module_type_id"),lit("#"),col("slot_position") )).select("Replacement_Identifier_Type","module_id").toPandas()
+lookup_df_control.index = lookup_df_control.Replacement_Identifier_Type
+lookup_dict_control = lookup_df_control.to_dict()['module_id']
+print(lookup_dict_control)
+
+
+
+#Step 1: Check if there is a module version test scheduled for this campaign. If not, skip this cell.
+#step 2: Obtain a mapping between each module type and the corresponding placement type. Dict struct --> {module_id : placement_type}
+#Step 3: Filter meta campaign only for active published. This will rotate only active published versions amongst candidates
+
+
+#Creating a mapping. This includes mapping for test published data
+
+placement_modid_lookup_pandas = dfMetaCampaignData_31.select("module_id","placement_type").distinct().toPandas()
+placement_modid_lookup_pandas.index = placement_modid_lookup_pandas.module_id
+placement_modid_dict = placement_modid_lookup_pandas.to_dict()['placement_type']
+print(placement_modid_dict)
+
+#Filtering meta campaign only for active published
+#The back up will be used to obtain the data for test published module ID's 
+
+#If no test published modules are present, then dfMetaCampaignData_31_backup == dfMetaCampaignData_31 :)
+
+if(module_version_test_flag == True):
+    dfMetaCampaignData_31_backup = dfMetaCampaignData_31
+
+dfMetaCampaignData_31 = dfMetaCampaignData_31.filter("status = 'active published'")
+
+if(module_version_test_flag == False):
+    dfMetaCampaignData_31_backup = dfMetaCampaignData_31
+
+
+
+
+#Finished creating meta data for module version test
 
 dfTravelers = (dfTraveler.repartition(rep,"email_address").cache())
 
@@ -305,12 +445,12 @@ try :
 	traveler = (sqlContext.read.
 					parquet(File_path_seg)
 					.repartition(rep))
-	log_df_update(sqlContext,1,'traveler-segment data imported',get_pst_date(),' ',str(traveler.count()),StartDate,File_path_seg,'Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,1,'traveler-segment data imported',get_pst_date(),' ',str(traveler.count()),StartDate,File_path_seg,'Orchestration.dbo.AlphaProcessDetailsLog')
 	
 except :
-	log_df_update(sqlContext,0,'failed',get_pst_date(),'traveler-segment data not present','0',StartDate,File_path,'Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,File_path,'Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,File_path,'Orchestration.dbo.CentralLog')
+#	log_df_update(sqlContext,0,'failed',get_pst_date(),'traveler-segment data not present','0',StartDate,File_path,'Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,File_path,'Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,File_path,'Orchestration.dbo.CentralLog')
 	raise Exception("traveler-segment data not present!!!")
 
 
@@ -335,12 +475,12 @@ final_df_for_alpha = (dfTraveler_MetaCampaign
 
 if  (final_df_for_alpha.count())<=0 :
 	check_str = 'check values of join keys namely segment_type_id, tpid,eapid and locale '
-	log_df_update(sqlContext,0,'Joining traveler segment and traveler data',get_pst_date(),check_str,'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
+#	log_df_update(sqlContext,0,'Joining traveler segment and traveler data',get_pst_date(),check_str,'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
 	raise Exception("Error in creating final_df_for_alpha")
-else :
-	log_df_update(sqlContext,1,'Joining traveler segment and traveler data',get_pst_date()," ",str(final_df_for_alpha.count()),StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#else :
+#	log_df_update(sqlContext,1,'Joining traveler segment and traveler data',get_pst_date()," ",str(final_df_for_alpha.count()),StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
 
 	
 
@@ -366,29 +506,46 @@ dfMetaCampaignData_4 = (dfMetaCampaignData_31
 ### dfMetaCampaignData_4  is created to find out the total number of versions available for a combination of module_type_id and placement_type
 
 if  (dfMetaCampaignData_4.count())<=0 :
-	log_df_update(sqlContext,0,'Dict_map function for module version allocation',get_pst_date(),'error in dict map function','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
+#	log_df_update(sqlContext,0,'Dict_map function for module version allocation',get_pst_date(),'error in dict map function','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
 	raise Exception("Error in dict_map function")
-else :
-	log_df_update(sqlContext,1,'Dict_map function for module version allocation',get_pst_date()," ",'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#else :
+#	log_df_update(sqlContext,1,'Dict_map function for module version allocation',get_pst_date()," ",'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
 
 	
 
 ### Joining with dfModuleVariableDefinition to populate Module content
+#Instead of two joins, I should use the filter logic later
 
 window_version = Window.partitionBy(col_grp).orderBy("version")
+
 dfMetaCampaignData_VarDef = (dfMetaCampaignData_31
 										.join(dfModuleVariableDefinition,["module_id","tpid","eapid","locale"],'left')
 										.join(dfMetaCampaignData_4,col_grp,'inner')
 										.withColumn("rank",dense_rank().over(window_version))
 										.drop("version").withColumnRenamed("rank","version")
 										.drop("locale"))
+										
+#Back up used in module info function. This has details about test published modules
+if(module_version_test_flag == True):
+    dfMetaCampaignData_VarDef_backup = (dfMetaCampaignData_31_backup
+                                            .join(dfModuleVariableDefinition,["module_id","tpid","eapid","locale"],'left')
+                                            .join(dfMetaCampaignData_4,col_grp,'inner')
+                                            .withColumn("rank",dense_rank().over(window_version))
+                                            .drop("version").withColumnRenamed("rank","version")
+                                            .drop("locale"))
+											
+else:
+    dfMetaCampaignData_VarDef_backup = dfMetaCampaignData_VarDef
 
+
+										
+										
 ### dfMetaCampaignData_VarDef is the data on the campaigns expanded completely where the granular level data is the var related data
 
 ### creating data frame having info about MIS tables
-mis_data_df = (dfMetaCampaignData_VarDef
+mis_data_df = (dfMetaCampaignData_VarDef_backup
 						.filter("var_source is not null")
 						.select("module_id","var_position","var_source","var_structure").distinct())
 
@@ -471,12 +628,12 @@ StartDate = get_pst_date()
 
 try:
 	readAllMisFiles(mis_data_file_names)
-	log_df_update(sqlContext,1,'MIS data imported',get_pst_date(),' ','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,1,'MIS data imported',get_pst_date(),' ','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
 
 except:
-	log_df_update(sqlContext,0,'failed',get_pst_date(),'MIS data is not available','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
+#	log_df_update(sqlContext,0,'failed',get_pst_date(),'MIS data is not available','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
 	raise Exception("MIS data not present!!!")
 
 	
@@ -512,12 +669,12 @@ for i in mis_data_rdd:          #goes along each row of mis_data_intermediate ta
 
 if len(mis_not_present) >0 :
 	file_name_str = "#".join(mis_not_present) + " MIS files are not present"
-	log_df_update(sqlContext,0,'Required MIS data not present',get_pst_date(),file_name_str,'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
+#	log_df_update(sqlContext,0,'Required MIS data not present',get_pst_date(),file_name_str,'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
 	raise Exception("MIS data not present!!!")
-else :
-	log_df_update(sqlContext,1,'Required MIS Data is present',get_pst_date()," ",'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#else :
+#	log_df_update(sqlContext,1,'Required MIS Data is present',get_pst_date()," ",'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
 
 	
 
@@ -534,7 +691,21 @@ dict_cpgn = sc.broadcast(dfMetaCampaignData_VarDef[dfMetaCampaignData_VarDef.var
 #dict_cpgn has a table with dfMetaCampaignData_VarDef with the var_position cast as string
 #broadcast is done to avoid shuffling in small tables. Shuffling is expensive in spark
 
-### creating dictionary mapping for number of variable position in each slot           
+if(module_version_test_flag == True):
+
+    dict_cpgn_new = sc.broadcast(dfMetaCampaignData_VarDef_backup[dfMetaCampaignData_VarDef_backup.var_position.isNotNull()]
+	    									.withColumn('var_position',dfMetaCampaignData_VarDef.var_position.cast(StringType()))
+	    								.select(col_list)
+	    									.toPandas())
+
+else:
+
+    dict_cpgn_new = dict_cpgn
+
+
+### creating dictionary mapping for number of variable position in each slot
+#Confirm before changing slot position map
+           
 slot_position_map = (dfMetaCampaignData_VarDef
 								 .groupBy('slot_position')
 								 .agg({'var_position':'max'})
@@ -553,21 +724,21 @@ StartDate = get_pst_date()
 
 ### creating data frame with unique combination of campaign id, test keys and segment type 
 df_slot =(final_df_for_alpha
-							.select('campaign_id','test_keys','segment_type_id')
+							.select('campaign_id','test_keys','segment_type_id','campaign_segment_type_id')
 							.distinct()
 							.withColumn('number_slots',lit(slots))
 							.repartition(rep)
 							.cache())
-
-
+							
+							
 if df_slot.count() <=0 :
-	log_df_update(sqlContext,0,'df_slot creation',get_pst_date(),'check final_df_for_alpha ','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
+#	log_df_update(sqlContext,0,'df_slot creation',get_pst_date(),'check final_df_for_alpha ','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
 
 	raise Exception("Error in df_slot creation!!!")
-else :
-	log_df_update(sqlContext,1,'df_slot creation',get_pst_date()," ",'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#else :
+#	log_df_update(sqlContext,1,'df_slot creation',get_pst_date()," ",'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
 
 	
 
@@ -625,13 +796,58 @@ df_slot_fun = (df_slot
 
 print("------------Finished fun function")
 
+
 if df_slot_fun.count() <=0 :
-	log_df_update(sqlContext,0,'module allocation function',get_pst_date(),'check df_slot and dict_cpgn tables','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
+#	log_df_update(sqlContext,0,'module allocation function',get_pst_date(),'check df_slot and dict_cpgn tables','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
 	raise Exception("Error in module allocation function!!!")
-else :
-	log_df_update(sqlContext,1,'module allocation function',get_pst_date()," ",'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#else :
+#	log_df_update(sqlContext,1,'module allocation function',get_pst_date()," ",'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+
+
+#Adding the snippet to substitute module_id's with test modules id's wherever applicable
+
+def module_allocation_modifier(campaign_id,test_keys,campaign_segment_type_id,map_dict1):
+    key_version = test_keys+"#"+campaign_segment_type_id+"#"+campaign_id
+    try:
+        temp = str(lookup_dict[key_version])
+    except:
+        temp = "dont_touch"
+        
+    if (temp == "dont_touch"):
+        return map_dict1
+    else:
+        temp_slot_dict = {}
+        for slot in map_dict1:
+            temp_map_dict = {}
+            for mod_id__priority in map_dict1[slot]:
+                mod_id = mod_id__priority.split("#")[0]
+                priority = mod_id__priority.split("#")[1]
+                version_replacement_id = test_keys+"#"+campaign_segment_type_id+"#"+campaign_id+"#"+mod_id+"#"+str(slot)                
+                try:
+                    replacement_version_id = str(lookup_dict_control[version_replacement_id]) #IF the key is not found, it goes to except
+                    if(placement_modid_dict[int(replacement_version_id)] == placement_modid_dict[int(map_dict1[slot][mod_id__priority])]):
+                        temp_map_dict[mod_id__priority] = replacement_version_id
+                    else:
+                        temp_map_dict[mod_id__priority] = map_dict1[slot][mod_id__priority]
+                except:
+                    temp_map_dict[mod_id__priority] = map_dict1[slot][mod_id__priority]
+            temp_slot_dict[slot] = temp_map_dict
+    return(temp_slot_dict)
+    
+module_allocation_modifier_udf = udf(module_allocation_modifier,MapType(StringType(),MapType(StringType(),StringType())))
+
+
+if(module_version_test_flag == True):
+    print("Module version test detected. Now replacing wherever possible")
+    df_slot_fun_new = df_slot_fun.withColumn("new_dict",module_allocation_modifier_udf("campaign_id","test_keys","campaign_segment_type_id","map_dict1"))
+    df_slot_fun_new = df_slot_fun_new.drop("map_dict1")
+    df_slot_fun_new = df_slot_fun_new.withColumnRenamed("new_dict","map_dict1")
+    df_slot_fun = df_slot_fun_new
+	
+
+
 
 
 
@@ -647,7 +863,7 @@ def module_info(map_dict1):
 						 test_dict = {"dummy#dummy":"dummy"}
 					
 					else:
-						 test = dict_cpgn.value[dict_cpgn.value.module_id == int(module_id)][['var_source','var_position','var_structure']]
+						 test = dict_cpgn_new.value[dict_cpgn_new.value.module_id == int(module_id)][['var_source','var_position','var_structure']]
 						 col_req = ['var_source','var_position']
 						 test.index = (test[col_req]
 												.astype(str)
@@ -659,6 +875,8 @@ def module_info(map_dict1):
 	
 module_info_udf = udf(module_info,MapType(StringType(),MapType(StringType(),StringType())))
 
+#Should an additional element be added to this repartition? Campaign segment type id?
+
 df_slot_fun_module = (df_slot_fun.withColumn('map_dict',module_info_udf('map_dict1'))
 									.repartition(rep,'campaign_id','test_keys','segment_type_id')
 								 .cache())
@@ -667,19 +885,19 @@ df_slot_fun_module = (df_slot_fun.withColumn('map_dict',module_info_udf('map_dic
 print("------------Finished module info function")
 
 if df_slot_fun_module.count() <=0 :
-	log_df_update(sqlContext,0,'module info function',get_pst_date(),'check df_slot and dict_cpgn tables','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
+#	log_df_update(sqlContext,0,'module info function',get_pst_date(),'check df_slot and dict_cpgn tables','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
 	raise Exception("Error in module info function!!!")
-else :
-	log_df_update(sqlContext,1,'module info function',get_pst_date()," ",'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#else :
+#	log_df_update(sqlContext,1,'module info function',get_pst_date()," ",'0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
 
 
 
 ### extracting col names that are required from travelers data
-var_source_list = dfMetaCampaignData_VarDef.select('var_source').distinct().rdd.flatMap(lambda x : x).collect()
+var_source_list = dfMetaCampaignData_VarDef_backup.select('var_source').distinct().rdd.flatMap(lambda x : x).collect()
 
-var_structure_list = dfMetaCampaignData_VarDef.select('var_structure').filter("var_structure is not null").distinct().rdd.flatMap(lambda x : x).collect()
+var_structure_list = dfMetaCampaignData_VarDef_backup.select('var_structure').filter("var_structure is not null").distinct().rdd.flatMap(lambda x : x).collect()
 
 joining_cols = [val.split('|')[0].split(';') for val in var_source_list if val != None]
 
@@ -720,13 +938,13 @@ traveler_data_content = (final_df_for_alpha_key.select(final_travel_cols+['key']
 ### meta data creation for campaign suppression, dictionary with default flag and campaign priority
 cols_suppression = ['module_id','campaign_id','priority','placement_type','module_type','default']
 
-df_suppre = (dfMetaCampaignData_VarDef.withColumn("default", dfMetaCampaignData_VarDef["default"].cast(IntegerType()))
+df_suppre = (dfMetaCampaignData_VarDef_backup.withColumn("default", dfMetaCampaignData_VarDef["default"].cast(IntegerType()))
 					 .select(cols_suppression).distinct().toPandas())  #Business understanding. Default column with binary values
 df_suppre.index = df_suppre["module_id"]
 
 suppress_dict = df_suppre.to_dict()
 
-cpgn_prio_pd = dfMetaCampaignData_VarDef.select('campaign_id','priority').distinct().toPandas()
+cpgn_prio_pd = dfMetaCampaignData_VarDef_backup.select('campaign_id','priority').distinct().toPandas()
 cpgn_prio_pd.index = cpgn_prio_pd['campaign_id']
 
 cpgn_prio_dict = cpgn_prio_pd.to_dict()['priority']
@@ -736,6 +954,10 @@ StartDate = get_pst_date()
 ##Populating None instead of default content
 
 print("------------started content map function")
+
+
+
+
 
 def content_map(row):
 
@@ -1007,11 +1229,11 @@ try :
 	final_result = final_result.withColumn("campaign_id",int_maker_udf("campaign_id"))	 
 	
 	
-	log_df_update(sqlContext,1,'content map function',get_pst_date(),' ',str(final_result.count()),StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')                
+#	log_df_update(sqlContext,1,'content map function',get_pst_date(),' ',str(final_result.count()),StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')                
 except :
-	log_df_update(sqlContext,0,'content map function',get_pst_date(),'error in content map function','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
-	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
+#	log_df_update(sqlContext,0,'content map function',get_pst_date(),'error in content map function','0',StartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression  process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.AlphaProcessDetailsLog')
+#	log_df_update(sqlContext,0,'Campaign Suppression process failed',get_pst_date(),'Error','0',AlphaStartDate,' ','Orchestration.dbo.CentralLog')
 
 	raise Exception("error in content map!!!")
 
@@ -1079,36 +1301,37 @@ except:
 ### User Token Changes Ends Here ###
 
 
-### Adding Seed Emails Starts Here ###
-StartDate = get_pst_date()
+if (locale_name == 'en_nz'):
+	### Adding Seed Emails Starts Here ###
+	StartDate = get_pst_date()
 
-seeds = (importSQLTable("AlphaStaging","AlphaSeedEmails")).filter("CampaignCategory = 'Merch' and IsActive = 1")
-SeedWindow = Window.orderBy("SeedEmail")
-AlphaOutputWindow = Window.partitionBy("campaign_id").orderBy("test_keys")
+	seeds = (importSQLTable("AlphaStaging","AlphaSeedEmails")).filter("CampaignCategory = 'Merch' and IsActive = 1")
+	SeedWindow = Window.orderBy("SeedEmail")
+	AlphaOutputWindow = Window.partitionBy("campaign_id").orderBy("test_keys")
 
-seedEmails = seeds.filter(pos_filter_cond).select("tpid","eapid","locale","SeedEmail").distinct().withColumn("row_id",row_number().over(SeedWindow))
+	seedEmails = seeds.filter(pos_filter_cond).select("tpid","eapid","locale","SeedEmail").distinct().withColumn("row_id",row_number().over(SeedWindow))
 
-seedCounts = seedEmails.count()
+	seedCounts = seedEmails.count()
 
-sampleForSeed = (final_result.withColumn("row_id",row_number().over(AlphaOutputWindow))
-		.filter("row_id <= "+str(seedCounts))
-	)
+	sampleForSeed = (final_result.withColumn("row_id",row_number().over(AlphaOutputWindow))
+			.filter("row_id <= "+str(seedCounts))
+		)
 
-sampleAfterSeed = (sampleForSeed.join(seedEmails, ["tpid","eapid","locale","row_id"], "inner")
-	    .drop("row_id").drop("email_address")
-	    .withColumnRenamed("SeedEmail","email_address")
-	    .withColumn("PAID",lit(999999999))
-    )
+	sampleAfterSeed = (sampleForSeed.join(seedEmails, ["tpid","eapid","locale","row_id"], "inner")
+		    .drop("row_id").drop("email_address")
+		    .withColumnRenamed("SeedEmail","email_address")
+		    .withColumn("PAID",lit(999999999))
+	    )
 
-ListOfColumns = [col for col in final_result.columns]
-	
-final_result = final_result.select(ListOfColumns).unionAll(sampleAfterSeed.select(ListOfColumns))
+	ListOfColumns = [col for col in final_result.columns]
 
-log_rowcount = final_result.count()
+	final_result = final_result.select(ListOfColumns).unionAll(sampleAfterSeed.select(ListOfColumns))
 
-log_df_update(sqlContext,1,'Adding Seed Emails',get_pst_date(),' ',str(final_result.count()),StartDate,File_path,'Orchestration.dbo.AlphaProcessDetailsLog')
+	log_rowcount = final_result.count()
 
-### Adding Seed Emails Ends Here ###
+	log_df_update(sqlContext,1,'Adding Seed Emails',get_pst_date(),' ',str(final_result.count()),StartDate,File_path,'Orchestration.dbo.AlphaProcessDetailsLog')
+
+	### Adding Seed Emails Ends Here ###
 
 StartDate = get_pst_date()
 
@@ -1142,52 +1365,53 @@ log_df_update(sqlContext,1,'Default Value nulled',get_pst_date(),' ','0',StartDa
 
 ##Addition of loyalty fields for Omni Process
 
+if (locale_name == 'en_nz'):
 
-StartDate = get_pst_date()
+	StartDate = get_pst_date()
 
-df_loyalty = importSQLTable("AlphaStaging","SterlingAndEliteMembers").drop('LANG_ID').drop("LRMPendingPoints")
-
-
-alphaOmni = (final_result_moduleCount2
-	.withColumnRenamed('tpid','TPID')
-	.withColumnRenamed('eapid','EAPID')
-	.withColumnRenamed('first_name','FIRST_NAME')
-	.withColumnRenamed('last_name','LAST_NAME')
-	.withColumnRenamed('lang_id','LANG_ID')
-	.withColumnRenamed('mer_status','IsMER')
-	.withColumnRenamed('paid','PAID')
-	.withColumnRenamed('email_address','EmailAddress')
-	.withColumn('SubjectLine',final_result_moduleCount2["S1_P1"])
-)
-
-alphaOmni1 = (alphaOmni
-	.withColumn('PM_OK_IND', alphaOmni["IsMER"])
-	.join(df_loyalty,['TPID','PAID'],'left'))
-
-final_result_moduleCount = (alphaOmni1
-	.withColumnRenamed('MemberID','LoyaltyMemberID')
-	.withColumnRenamed('LRMTierName','LoyaltyMemberTierName')
-	.withColumnRenamed('MonetaryValue','MonetaryValue')
-	.withColumnRenamed('LRMAvailablePoints','LoyaltyAvailablePoints')
-)
+	df_loyalty = importSQLTable("AlphaStaging","SterlingAndEliteMembers").drop('LANG_ID').drop("LRMPendingPoints")
 
 
-def loyalty(value):
-   if   value == "Active": return 1
-   else : return 0
+	alphaOmni = (final_result_moduleCount2
+		.withColumnRenamed('tpid','TPID')
+		.withColumnRenamed('eapid','EAPID')
+		.withColumnRenamed('first_name','FIRST_NAME')
+		.withColumnRenamed('last_name','LAST_NAME')
+		.withColumnRenamed('lang_id','LANG_ID')
+		.withColumnRenamed('mer_status','IsMER')
+		.withColumnRenamed('paid','PAID')
+		.withColumnRenamed('email_address','EmailAddress')
+		.withColumn('SubjectLine',final_result_moduleCount2["S1_P1"])
+	)
+
+	alphaOmni1 = (alphaOmni
+		.withColumn('PM_OK_IND', alphaOmni["IsMER"])
+		.join(df_loyalty,['TPID','PAID'],'left'))
+
+	final_result_moduleCount = (alphaOmni1
+		.withColumnRenamed('MemberID','LoyaltyMemberID')
+		.withColumnRenamed('LRMTierName','LoyaltyMemberTierName')
+		.withColumnRenamed('MonetaryValue','MonetaryValue')
+		.withColumnRenamed('LRMAvailablePoints','LoyaltyAvailablePoints')
+	)
+
+
+	def loyalty(value):
+	   if   value == "Active": return 1
+	   else : return 0
 	   
-udfloyalty = udf(loyalty, StringType())
+	udfloyalty = udf(loyalty, StringType())
 
-final_result_moduleCount = final_result_moduleCount.withColumn("LoyaltyMemberStatus", udfloyalty("LRMStatus"))
+	final_result_moduleCount = final_result_moduleCount.withColumn("LoyaltyMemberStatus", udfloyalty("LRMStatus"))
 
-## Dropping unwanted columns
-final_result_moduleCount = (final_result_moduleCount
-	.drop("AudienceTableName")
-	.drop("LRMStatus")
-	.drop("campaign_priority")
-)
+	## Dropping unwanted columns
+	final_result_moduleCount = (final_result_moduleCount
+		.drop("AudienceTableName")
+		.drop("LRMStatus")
+		.drop("campaign_priority")
+	)
 
-log_df_update(sqlContext,1,'Loyalty Fields added',get_pst_date(),' ',str(log_rowcount),StartDate,File_path,'Orchestration.dbo.AlphaProcessDetailsLog')
+	log_df_update(sqlContext,1,'Loyalty Fields added',get_pst_date(),' ',str(log_rowcount),StartDate,File_path,'Orchestration.dbo.AlphaProcessDetailsLog')
 
 ### removing cols not required in output
 col_final_ls = [col for col in final_result_moduleCount.columns if col.find("authrealm")<0]
@@ -1219,3 +1443,6 @@ dfMetaCampaignData_VarDef.write.mode("overwrite").parquet("s3n://big-data-analyt
 log_df_update(sqlContext,1,'Campaign Suppression  process completed',get_pst_date(),' ',str(log_rowcount),AlphaStartDate,path,'Orchestration.dbo.AlphaProcessDetailsLog')
 
 log_df_update(sqlContext,1,'Campaign Suppression completed',get_pst_date(),' ',str(log_rowcount),AlphaStartDate,path,'Orchestration.dbo.CentralLog')
+
+
+
